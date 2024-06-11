@@ -1,6 +1,6 @@
 
 export const environment = {
     production: false,
-    apiURL: 'http://localhost/belajar-laravel/api',
+    apiURL: 'http://localhost/venturo-onboard-api/api',
     baseUrl: 'http://localhost:4200'
 }
