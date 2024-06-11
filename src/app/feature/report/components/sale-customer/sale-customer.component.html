@@ -1,0 +1,100 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header">
+                    <h1>Rekap Penjualan Per Customer</h1>
+                    <div class="mt-3 d-flex flex-column flex-md-row gap-2">
+                        <div class="col-12 col-md-2">
+                            <app-daterangepicker [startDate]="filter.start_date" [endDate]="filter.end_date"
+                                                 [showRanges]="'true'" (onChange)="setFilterPeriod($event)"
+                                                 [isFilter]="true">
+                            </app-daterangepicker>
+                        </div>
+                        <div class="col-12 col-md-10">
+                            <div class="d-flex justify-content-between">
+                                <ng-select class="filter-select" style="width: 250px" [items]="customers"
+                                           (change)="setFilterByCustomer($event)" id="id" placeholder="Pilih Customer"
+                                           bindLabel="name" bindValue="id" [loading]="loadingCustomers"
+                                           [searchable]="false" [multiple]="true">
+                                    <ng-template ng-header-tmp>
+                                        <input class="form-control form-select-sm" type="text" debounceKeyUp
+                                               (onEvent)="setFilterByCustomer($event.target.value)"/>
+                                    </ng-template>
+                                </ng-select>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-primary me-2" (click)="loadSale()">
+                                        Tampilkan
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary" (click)="downloadExcel()">
+                                        Excel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered" id="report-sales">
+                            <thead class="thead-light">
+                            <tr>
+                                <th class="align-middle text-center" rowspan="2" id="menu">Customer</th>
+                                <th [colSpan]="meta?.dates?.length" class="text-center" id="periode">
+                                    Periode:
+                                    {{ meta?.dates[0] | date:'dd MMMM yyyy' }} -
+                                    {{ meta?.dates[meta?.dates.length - 1] | date:'dd MMMM yyyy' }}
+                                </th>
+                                <th class="align-middle text-center" rowspan="2" id="total">Total</th>
+                            </tr>
+                            <tr>
+                                <th *ngFor="let date of meta.dates" id="date" class="text-center">
+                                    {{ date | date:'dd' }}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngIf="meta?.grand_total > 0" class="customer">
+                                <td>Grand Total</td>
+                                <td class="nominal fw-normal" *ngFor="let total of meta?.total_per_date">
+                                    {{ total > 0 ? (total | number) : '-' }}
+                                </td>
+                                <td class="nominal">
+                                    {{ meta?.grand_total | number }}
+                                </td>
+                            </tr>
+                            <ng-container *ngFor="let customer of sale">
+                                <tr class="customer">
+                                    <td>
+                                        {{ customer.customer_name }}
+                                    </td>
+                                    <td class="nominal pointer fw-normal" *ngFor="let transaction of customer.transactions"
+                                        (click)="openDetailModal(detailSale, customer, transaction.date_transaction)">
+                                        {{ transaction.total_sale > 0 ? (transaction.total_sale | number) : '-' }}
+                                    </td>
+                                    <td class="nominal">
+                                        {{ customer.transactions_total | number }}
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #detailSale let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">{{titleModal}}</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-modal-detail [customerId]="customerId" [date]="date"></app-modal-detail>
+    </div>
+</ng-template>

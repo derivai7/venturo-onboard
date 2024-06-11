@@ -1,0 +1,83 @@
+<ng-progress [speed]="200" [meteor]="false" [spinner]="false" color="#009aad" style="height: 4px;"></ng-progress>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div *ngIf="showMode" class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <h1>{{ title }}</h1>
+                    <div class="row align-items-center g-1 g-md-0">
+                        <div class="col-6 col-md-4 form-group m-0">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" [(ngModel)]="filter.name"
+                                       placeholder="Masukkan nama"/>
+                                <span class="input-group-text bg-primary text-white pointer"
+                                      (click)="reloadDataTable()">
+                                    <em class="fa fa-search"></em>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 d-flex align-items-center px-1">
+                            <select class="form-select form-select-sm" [(ngModel)]="filter.is_verified"
+                                    (change)="reloadDataTable()" name="is_verified">
+                                <option class="select" value="">Semua Status</option>
+                                <option [value]="1">Sudah Terverifikasi</option>
+                                <option [value]="!1">Belum Terverifikasi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-sm btn-primary w-100" (click)="createCustomer()">
+                                <em class="fa fa-plus align-middle"></em> Tambah Customer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" datatable [dtOptions]="dtOptions">
+                            <thead class="thead-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let customer of listCustomer; let i = index">
+                                <td class="align-middle">{{ i + 1 }}</td>
+                                <td class="align-middle">{{ customer.name }}</td>
+                                <td class="align-middle">{{ customer.email }}</td>
+                                <td class="align-middle">
+                                        <span class="badge"
+                                              [ngClass]="customer.is_verified ? 'bg-success' : 'bg-danger'">
+                                            {{ customer.is_verified ? 'Sudah Terverifikasi' : 'Belum Terverifikasi' }}
+                                        </span>
+                                </td>
+                                <td class="align-middle">
+                                    <div class="d-flex">
+                                        <button class="btn btn-light btn-sm me-2" (click)="updateCustomer(customer)"
+                                                ngbTooltip="Ubah">
+                                            <em class="fa fa-edit"></em>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" (click)="deleteCustomer(customer.id)"
+                                                ngbTooltip="Hapus">
+                                            <em class="fa fa-trash"></em>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="!showMode">
+                <app-form-customer [titleForm]="title" [customerId]="customerId" (afterSave)="showMode = true">
+                </app-form-customer>
+            </ng-container>
+        </div>
+    </div>
+</div>

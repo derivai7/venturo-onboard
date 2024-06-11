@@ -1,0 +1,100 @@
+<div class="container-fluid" *ngIf="!showForm">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <h1>Daftar Promo</h1>
+                    <div class="d-flex justify-content-end row g-1">
+                        <div class="col-12 col-md-4 d-flex">
+                            <button class="btn btn-sm btn-primary w-100" (click)="formCreate()">
+                                <em class="fa fa-plus align-middle"></em> Tambah Promo
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-4 d-flex">
+                            <select class="form-select form-select-sm" name="status"
+                                    [(ngModel)]="filter.status" (change)="reloadDataTable()">
+                                <option value="">Semua Status</option>
+                                <option value="voucher">Voucher</option>
+                                <option value="discount">Diskon</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-4 d-flex">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" placeholder="Tulis nama promo"
+                                       [(ngModel)]="filter.name" name="name" debounceKeyUp
+                                       (onEvent)="reloadDataTable()"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" datatable [dtOptions]="dtOptions">
+                            <thead class="thead-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Foto</th>
+                                <th>Nama</th>
+                                <th>Type</th>
+                                <th>Total</th>
+                                <th>Aksi</th>
+                            </tr>
+                            </thead>
+                            <tbody class="tbody">
+                            <tr *ngFor="let promo of listPromo;">
+                                <td class="align-middle">{{ promo.no }}</td>
+                                <td class="align-middle">
+                                    <div class="image-promo rounded">
+                                        <div>
+                                            <img *ngIf="promo.photo_url != null" src="{{promo.photo_url}}" alt="">
+                                        </div>
+                                        <p class="status">{{ promo.status | titlecase }}</p>
+                                        <p class="nominal">
+                                            {{ promo.status == 'voucher' ? (promo.nominal_rupiah | currency:'Rp. ')
+                                            : promo.nominal_percentage + '%' }}
+                                        </p>
+                                    </div>
+                                </td>
+                                <td class="align-middle">{{ promo.name }}</td>
+                                <td class="align-middle">{{ promo.status | titlecase }}</td>
+                                <td class="align-middle">
+                                    {{ promo.status == 'voucher' ? (promo.nominal_rupiah | currency:'Rp. ')
+                                    : promo.nominal_percentage + '%' }}
+                                </td>
+                                <td class="align-middle">
+                                    <div class="d-flex">
+                                        <button class="btn btn-light btn-sm me-2" (click)="formUpdate(promo)"
+                                                ngbTooltip="Ubah">
+                                            <em class="fa fa-edit"></em>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" (click)="deletePromo(promo.id)"
+                                                ngbTooltip="Hapus">
+                                            <em class="fa fa-trash"></em>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" *ngIf="showForm">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header  d-flex justify-content-between">
+                    <h1>{{titleForm}}</h1>
+                </div>
+                <div class="card-body">
+                    <app-form-promo [promoId]="promoId" (afterSave)="onAfterSave($event)"></app-form-promo>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="upload-image-container">
+    <div class="image-picker overflow-hidden rounded"
+         (click)="imagePicker.click()"
+         (dragover)="dragOverHandler($event)"
+         (drop)="dropHandler($event, modalCrop)">
+        <div class="no-image" *ngIf="!imageUrl">
+            <em class="fa fa-image"></em>
+            <p class="m-0 fw-bold">Add Image</p>
+            <span class="font-size-12">Drag, drop or click here to choose a file.</span>
+        </div>
+        <div *ngIf="imageUrl">
+            <img src="{{imageUrl}}" alt="Gambar Baru"/>
+        </div>
+        <input type="file" (change)="fileChangeEvent($event, modalCrop)" class="hide" #imagePicker>
+    </div>
+</div>
+
+
+<ng-template #modalCrop let-modal>
+    <div class="modal-body">
+        <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true"
+                       [aspectRatio]="config.ratioWidth / config.ratioHigh" [imageQuality]="config.imageQuality"
+                       format="jpeg"
+                       (imageCropped)="imageCropped($event)">
+        </image-cropper>
+    </div>
+    <div class="modal-footer text-right">
+        <button type="submit" class="btn btn-light" (click)="modal.close()">
+            Close
+        </button>
+        <button type="submit" class="btn btn-primary" (click)="submit()"><em class="fa fa-save"></em> Submit</button>
+    </div>
+</ng-template>

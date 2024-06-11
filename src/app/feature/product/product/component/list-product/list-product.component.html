@@ -1,0 +1,117 @@
+<ng-progress [speed]="200" [meteor]="false" [spinner]="false" color="#009aad" style="height: 4px;"></ng-progress>
+
+<div class="container-fluid" *ngIf="!showForm">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <h1>Daftar Menu</h1>
+                    <div class="d-flex justify-content-end row g-1">
+                        <div class="col-6 col-md-3 d-flex">
+                            <select class="form-select form-select-sm" name="product_category_id"
+                                    [(ngModel)]="filter.product_category_id" (change)="reloadDataTable()"
+                                    [disabled]="isLoadingCategories">
+                                <option value="" [disabled]="isLoadingCategories">
+                                    {{ isLoadingCategories ? "Loading..." : "Semua Kategori" }}
+                                </option>
+                                <option *ngFor="let category of categories" [value]="category.id"
+                                        [disabled]="isLoadingCategories">{{ category.name }}</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-3 d-flex">
+                            <select class="form-select form-select-sm" name="is_available"
+                                    [(ngModel)]="filter.is_available" (change)="reloadDataTable()">
+                                <option value="">Semua Status</option>
+                                <option value="1">Ada</option>
+                                <option value="0">Habis</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-3 d-flex">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" placeholder="Tulis nama makanan"
+                                       [(ngModel)]="filter.name" name="name" debounceKeyUp
+                                       (onEvent)="reloadDataTable()"/>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 d-flex">
+                            <button class="btn btn-sm btn-primary w-100" (click)="formCreate()">
+                                <em class="fa fa-plus align-middle"></em> Tambah Menu
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" datatable [dtOptions]="dtOptions">
+                            <thead class="thead-light">
+                            <tr>
+                                <th style="width: 70px;">No</th>
+                                <th>Gambar</th>
+                                <th>Nama</th>
+                                <th>Kategori</th>
+                                <th>Status</th>
+                                <th>Harga</th>
+                                <th>Aksi</th>
+                            </tr>
+                            </thead>
+                            <tbody class="tbody">
+                            <tr *ngFor="let product of listProduct;">
+                                <td class="align-middle">{{ product.no }}</td>
+                                <td class="align-middle">
+                                    <img *ngIf="product.photo_url; else noImage" class="rounded" [src]="product.photo_url" width="100" height="100"
+                                         alt="Gambar {{ product.name }}"/>
+                                    <ng-template #noImage>
+                                            <div class="null-image rounded">
+                                                <em class="fa fa-image fa-2x mb-1 text-muted"></em>
+                                                <p class="mt-0 font-size-10">Tidak ada gambar</p>
+                                            </div>
+                                    </ng-template>
+                                </td>
+
+                                <td class="align-middle">{{ product.name }}</td>
+                                <td class="align-middle">{{ product.product_category_name }}</td>
+                                <td class="align-middle">
+                                    <span class="badge"
+                                          [ngClass]="product.is_available == '1' ? 'bg-success' : 'bg-danger'">
+                                        {{ product.is_available == '1' ? 'Ada' : 'Habis' }}
+                                    </span>
+                                </td>
+                                <td class="align-middle">Rp {{ product.price | number }}</td>
+                                <td class="align-middle">
+                                    <div class="d-flex">
+                                        <button class="btn btn-light btn-sm me-2" (click)="formUpdate(product)"
+                                                ngbTooltip="Ubah">
+                                            <em class="fa fa-edit"></em>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.id)"
+                                                ngbTooltip="Hapus">
+                                            <em class="fa fa-trash"></em>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" *ngIf="showForm">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header  d-flex justify-content-between">
+                    <h1>{{titleForm}}</h1>
+                </div>
+                <div class="card-body">
+                    <app-form-product [productId]="productId" (afterSave)="onAfterSave($event)"></app-form-product>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

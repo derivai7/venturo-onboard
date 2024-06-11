@@ -1,0 +1,19 @@
+.image-promo {
+  height: 120px;
+  width: 100%;
+}
+
+.image-promo p.status {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.image-promo p.nominal {
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .image-promo {
+    width: 200px;
+  }
+}

@@ -1,0 +1,79 @@
+<ng-progress [speed]="200" [meteor]="false" [spinner]="false" color="#009aad" style="height: 4px;"></ng-progress>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <h1>List User</h1>
+                    <div class="d-flex justify-content-end row g-1">
+                        <div class="col-8 d-flex align-items-center">
+                            <label for="name" class="me-2">Nama</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" id="name" class="form-control" [(ngModel)]="filter.name"/>
+                                <span class="input-group-text bg-primary text-white pointer"
+                                      (click)="reloadDataTable()">
+                                    <em class="fa fa-search"></em>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-4 d-flex">
+                            <button class="btn btn-sm btn-primary w-100" (click)="createUser(formUser)">
+                                <em class="fa fa-plus align-middle"></em> Tambah User
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" datatable [dtOptions]="dtOptions">
+                            <thead class="thead-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Telepon</th>
+                                <th>Aksi</th>
+                            </tr>
+                            </thead>
+                            <tbody class="tbody">
+                            <tr *ngFor="let user of listUser;">
+                                <td class="align-middle">{{ user.no }}</td>
+                                <td class="align-middle">{{ user.name }}</td>
+                                <td class="align-middle">{{ user.email }}</td>
+                                <td class="align-middle">{{ user.phone_number }}</td>
+                                <td class="align-middle">
+                                    <div class="d-flex">
+                                        <button class="btn btn-light btn-sm me-2" (click)="updateUser(formUser, user)"
+                                                ngbTooltip="Ubah">
+                                            <em class="fa fa-edit"></em>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)"
+                                                ngbTooltip="Hapus">
+                                            <em class="fa fa-trash"></em>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #formUser let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">{{ titleModal }}</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-form-user [userId]="userId" (afterSave)="onAfterSave($event); modal.close();"></app-form-user>
+    </div>
+</ng-template>

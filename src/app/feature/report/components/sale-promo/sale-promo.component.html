@@ -1,0 +1,72 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <h1>Laporan Pemakaian Promo</h1>
+                    <div class="row g-1 w-md-600px">
+                        <div class="col-12 col-md-4">
+                            <app-daterangepicker [startDate]="filter.start_date" [endDate]="filter.end_date"
+                                                 [showRanges]="'true'" (onChange)="setFilterPeriod($event)"
+                                                 [isFilter]="true">
+                            </app-daterangepicker>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <ng-select class="filter-select" [items]="customers" (change)="setFilterCustomer($event)"
+                                       id="customer_id" placeholder="Pilih Customer" bindLabel="name" bindValue="id"
+                                       [loading]="loadingCustomer" [searchable]="false" [multiple]="true">
+                                <ng-template ng-header-tmp>
+                                    <input class="form-control form-select-sm" type="text" debounceKeyUp
+                                           (onEvent)="getCustomers($event.target.value)"/>
+                                </ng-template>
+                            </ng-select>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <ng-select class="filter-select" [items]="promos" (change)="setFilterPromo($event)"
+                                       id="promo_id"
+                                       placeholder="Pilih Promo" bindLabel="name" bindValue="id"
+                                       [loading]="loadingPromo" [searchable]="false" [multiple]="true">
+                                <ng-template ng-header-tmp>
+                                    <input class="form-control form-select-sm" type="text" debounceKeyUp
+                                           (onEvent)="getPromos($event.target.value)"/>
+                                </ng-template>
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" datatable [dtOptions]="dtOptions">
+                            <thead class="thead-light">
+                            <tr>
+                                <th class="align-middle no-col">No</th>
+                                <th class="align-middle customer-col">Customer</th>
+                                <th class="align-middle info-col">Tanggal &  Waktu</th>
+                                <th class="align-middle info-col">Promo</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let sale of sales;">
+                                <td class="align-middle no-col">{{ sale.no }}</td>
+                                <td class="align-middle customer-col">{{ sale.customer_name }}</td>
+                                <td class="align-middle info-col">
+                                    {{ sale.date_transaction | date:'dd-MM-yyyy HH:mm' }}
+                                </td>
+                                <td class="align-middle info-col">
+                                    <div *ngIf="sale.voucher_name" class="d-flex">
+                                        <span class="me-1">-</span>{{ sale.voucher_name }}
+                                    </div>
+                                    <div *ngIf="sale.discount_name" class="d-flex">
+                                        <span class="me-1">-</span>{{ sale.discount_name }}
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

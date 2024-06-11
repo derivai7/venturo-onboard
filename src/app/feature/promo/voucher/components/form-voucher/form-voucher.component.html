@@ -1,0 +1,113 @@
+<div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+<form>
+    <div class="row g-3 g-md-5">
+        <div class="col-md-2">
+            <div class="mx-auto image-promo rounded">
+                <div>
+                    <img *ngIf="formModel.photo_url != ''" src="{{formModel.photo_url}}" alt="">
+                </div>
+                <p class="status">Voucher</p>
+                <p class="nominal">
+                    {{ formModel.nominal_rupiah | currency:'Rp. ' }}
+                </p>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group row mb-3">
+                <label class="col-md-3 form-label required my-auto">Customer</label>
+                <div class="col-md-9">
+                    <div class="input-group">
+                        <ng-select class="flex-fill" [items]="customers" placeholder="Pilih Customer" bindLabel="name"
+                                   bindValue="id" [loading]="loadingData" [searchable]="false"
+                                   [(ngModel)]="formModel.customer_id" name="customer_id">
+                            <ng-template ng-header-tmp>
+                                <input class="form-control" type="text" debounceKeyUp
+                                       (onEvent)="getCustomers($event.target.value)"/>
+                            </ng-template>
+                        </ng-select>
+                        <div class="input-group-append" (click)="createCustomer(formCustomer)">
+                            <span class="input-group-text h-100">
+                                <em class="fa fa-plus"></em>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-md-3 form-label required my-auto">Voucher</label>
+                <div class="col-md-9">
+                    <ng-select [items]="promo" placeholder="Pilih Voucher" bindLabel="name" bindValue="id"
+                               [loading]="loadingData" [searchable]="false" [(ngModel)]="formModel.promo_id"
+                               name="promo_id" (change)="setSelectedPromo($event)">
+                        <ng-template ng-header-tmp>
+                            <input class="form-control" type="text" debounceKeyUp
+                                   (onEvent)="getVoucherById($event.target.value)"/>
+                        </ng-template>
+                    </ng-select>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-md-3 form-label required my-auto">Periode</label>
+                <div class="col-md-9">
+                    <app-daterangepicker [startDate]="formModel.start_time" [endDate]="formModel.end_time"
+                                         [single]="true" [disabled]="!formModel.promo_id"
+                                         (onChange)="setPeriodValue($event)">
+                    </app-daterangepicker>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-md-3 form-label required my-auto">Jumlah</label>
+                <div class="col-md-9">
+                    <input [(ngModel)]="formModel.total_voucher" type="text" name="total_voucher" class="form-control"
+                           placeholder="">
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-md-3 form-label required my-auto">Nominal</label>
+                <div class="col-md-9">
+                    <div class="input-group disabled">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Rp</span>
+                        </div>
+                        <input [(ngModel)]="formModel.nominal_rupiah" type="text" name="nominal_rupiah"
+                               class="form-control" placeholder="Ex. 10.000">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group row mb-3">
+                <label class="col-md-3 form-label mt-md-2">Catatan</label>
+                <div class="col-md-9">
+                    <ckeditor [editor]="configEditor" [(ngModel)]="formModel.description" name="description">
+                    </ckeditor>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-primary me-2" (click)="back()">
+            <em class="fas fa-chevron-left"></em> Keluar
+        </button>
+        <button type="submit" class="btn btn-primary" [ngClass]="{'disabled': isDisabledForm}" (click)="save()">
+            <span *ngIf="isDisabledForm" class="spinner-border spinner-border-sm me-2"></span>
+            <span *ngIf="!isDisabledForm">
+                        <em class="fas fa-save"></em> Simpan
+                    </span>
+        </button>
+    </div>
+</form>
+
+
+<ng-template #formCustomer let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">Form Tambah Customer</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-form-customer [customerId]="''" [isModal]="true"
+                           (afterSave)="modal.close(); getCustomers()"></app-form-customer>
+    </div>
+</ng-template>

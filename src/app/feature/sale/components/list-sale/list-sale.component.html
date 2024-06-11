@@ -1,0 +1,99 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <div class="row g-1">
+                        <div class="col-6">
+                            <ng-select #selectCustomer class="filter-select" [items]="customers" id="customer_id"
+                                       [searchable]="true" placeholder="Pilih Customer" bindLabel="name" bindValue="id"
+                                       [loading]="loadingCustomer" (change)="onCustomerChange($event)">
+                            </ng-select>
+                        </div>
+                        <div class="col-6">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control border-right-none"
+                                       placeholder="Tulis nama menu"
+                                       [(ngModel)]="filter.product_name" name="name" debounceKeyUp
+                                       (onEvent)="getProducts(filter.product_name)"/>
+                                <span *ngIf="filter.product_name" class="input-group-text btn-reset">
+                                    <em class="fa fa-times font-size-12 text-black-50"
+                                        (click)="clearFilterProduct()"></em>
+                                </span>
+                                <span class="input-group-text btn-search">
+                                    <em class="fa fa-search font-size-12 text-black-50"></em>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row flex-wrap gap-3">
+                    <div class="col-lg-8 col-md-12 card-body">
+                        <div class="loadingProgress" [style.width.%]="loadingProgressProduct"></div>
+                        <div class="row g-3">
+                            <div *ngFor="let product of products" class="col-custom">
+                                <div class="card item border-light rounded mb-0 overflow-hidden">
+                                    <button class="edit-menu btn btn-light btn-sm me-2"
+                                            (click)="updateProduct(formUpdateProduct, product.id)">
+                                        <em class="fa fa-edit"></em>
+                                    </button>
+                                    <div class="img-area w-100 text-center overflow-hidden">
+                                        <img *ngIf="product.photo_url; else noImage" src="{{product.photo_url}}"
+                                             alt="Photo {{product.name}}">
+                                        <ng-template #noImage>
+                                            <div class="null-image mt-3">
+                                                <em class="fa fa-image fa-4x mb-1 text-muted"></em>
+                                                <p class="mt-0 font-size-10">Tidak ada gambar</p>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="card-body details text-center p-2 m-auto">
+                                        <p class="card-title m-0 font-size-12">{{product.name}}</p>
+                                        <p class="card-text fw-bold">{{product.price | currency:'Rp. '}}</p>
+                                        <div class="d-flex flex-column">
+                                            <button type="button" class="btn btn-sm btn-primary"
+                                                    (click)="addMenuOrder(product)">
+                                                <em class="fa fa-plus align-middle"></em> Tambah Pesanan
+                                            </button>
+                                            <div *ngIf="product.details.length > 0" class="mt-2">
+                                                <select class="form-select form-select-sm"
+                                                        [(ngModel)]="product.selected_detail">
+                                                    <option selected [ngValue]="undefined">Tanpa Tambahan</option>
+                                                    <option *ngFor="let detail of product.details"
+                                                            [ngValue]="detail">
+                                                        {{detail.description}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3 bg-light rounded py-4 px-3 position-relative">
+                        <app-form-sale [customer]="selectedCustomer" [productOrders]="productOrders"
+                                       [productDiscounts]="productDiscounts" [paymentDetail]="paymentDetail"
+                                       (afterSaveCustomer)="afterSaveCustomer($event)"
+                                       (afterSaveSale)="afterSaveSale($event)" (changeDiscount)="discountChange($event)"
+                                       (changeVoucher)="voucherChange($event)"
+                                       (changeDetails)="calculatePaymentDetails()"></app-form-sale>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #formUpdateProduct let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">Update Product</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-form-product [productId]="productId" (afterSave)="modal.close(); getProducts(filter.product_name);">
+        </app-form-product>
+    </div>
+</ng-template>

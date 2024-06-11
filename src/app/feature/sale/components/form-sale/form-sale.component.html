@@ -1,0 +1,156 @@
+<div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="m-0">Detail Order</h5>
+            <h3 class="text-primary">{{ customer?.name }}</h3>
+        </div>
+        <div *ngIf="customer">
+            <button class="btn" (click)="updateCustomer(formUpdateCustomer)">
+                <em class="fa fa-edit text-primary"></em>
+            </button>
+        </div>
+    </div>
+    <div class="promo-section mb-3 py-2">
+        <h6 class="mb-3">Promo</h6>
+        <div class="d-flex gap-2">
+            <div *ngIf="discount" class="col-sm-6 item rounded p-2">
+                <h4 class="text-primary mb-0">{{ discount.nominal_percentage }}%</h4>
+                <p class="m-0 font-size-10">{{ discount.name }}</p>
+            </div>
+            <div *ngIf="voucher" class="col-sm-6 item rounded p-2">
+                <h5 class="text-primary mb-0">{{ voucher.nominal_rupiah | currency:'Rp. ' }}</h5>
+                <p class="m-0 font-size-10">{{ voucher.name }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="menu-section overflow-hidden" cdkDropList (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let product of productOrders" @slideInOut cdkDragLockAxis="y" cdkDrag
+             class="item d-flex justify-content-between mb-2">
+            <div class="d-flex align-items-center w-100">
+                <div class="img-area">
+                    <img *ngIf="product.photo_url; else noImage" src="{{product.photo_url}}"
+                         [alt]="'Photo ' + product.name">
+                    <ng-template #noImage>
+                        <div class="null-image">
+                            <em class="fa fa-image fa-2x text-muted"></em>
+                            <p class="m-0 font-size-10">Tidak ada gambar</p>
+                        </div>
+                    </ng-template>
+                    <div class="item-notes">
+                        <button class="btn btn-sm btn-outline-primary" (click)="toggleNoteInput(product)">
+                            <em *ngIf="!product.showNoteInput" class="fas fa-edit"></em>
+                            <em *ngIf="product.showNoteInput" class="fas fa-save"></em>
+                        </button>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <p *ngIf="!product.selected_detail" class="m-0 fw-bold font-size-11">
+                        {{ product.name }}
+                    </p>
+                    <p *ngIf="product.selected_detail" class="m-0 fw-bold font-size-11">
+                        {{ product.name }} ({{ product.selected_detail.description }})
+                    </p>
+                    <p class="fw-bold text-primary m-0">
+                        {{ product.total_nominal | currency:'Rp. ' }}
+                    </p>
+                    <div class="d-flex align-items-center mt-1 font-size-10" *ngIf="product.note">
+                        <em class="far fa-clipboard me-1 text-muted"></em>
+                        <p class="m-0 text-muted">{{ product.note }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="qty d-flex align-items-center">
+                <button class="btn btn-sm btn-outline-primary" (click)="reduceTotalItem(product)">
+                    <em class="fas fa-minus"></em>
+                </button>
+                <span class="mx-2 fw-bold">{{ product.total_item }}</span>
+                <button class="btn btn-sm btn-primary" (click)="addTotalItem(product)">
+                    <em class="fas fa-plus"></em>
+                </button>
+            </div>
+            <div class="input-item-notes" [ngStyle]="{'right': product.showNoteInput ? '0' : '-100%'}">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control border-right-none bg-white" [(ngModel)]="product.note"
+                           placeholder="Tulis catatan"/>
+                    <span *ngIf="product.note != ''" class="input-group-text border-x-none bg-white">
+                        <em class="fa fa-times font-size-12 text-black-50 cursor-pointer"
+                            (click)="clearNote(product)"></em>
+                    </span>
+                    <span class="input-group-text border-left-none bg-white">
+                        <em class="fa fa-edit font-size-12 text-black-50"></em>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="payment-detail py-2">
+        <h6 class="mb-3">Detail Pembayaran</h6>
+        <div class="font-size-12">
+            <div class="d-flex justify-content-between">
+                <p class="mb-1">Subtotal</p>
+                <p class="fw-bold mb-1">
+                    {{ paymentDetail.subtotal > 0 ? (paymentDetail.subtotal | currency:'Rp. ') : 'Rp -' }}
+                </p>
+            </div>
+            <div class="d-flex justify-content-between">
+                <p class="mb-1">Tax 11%</p>
+                <p class="fw-bold mb-1">
+                    {{ paymentDetail.tax > 0 ? (paymentDetail.tax | currency:'Rp. ') : 'Rp -' }}
+                </p>
+            </div>
+            <div *ngIf="customer && discount">
+                <div class="d-flex justify-content-between">
+                    <p class="mb-1">Discount</p>
+                    <p class="fw-bold mb-1">
+                        {{ paymentDetail.discount > 0 ? (paymentDetail.discount | currency:'Rp. ') : 'Rp -' }}
+                    </p>
+                </div>
+                <ul class="m-0 p-0 ps-2">
+                    <li class="m-0 font-size-10">
+                        {{ discount.nominal_percentage }}% {{ discount.name }}
+                    </li>
+                </ul>
+            </div>
+            <div *ngIf="customer && voucher">
+                <div class="d-flex justify-content-between">
+                    <p class="mb-1">Voucher </p>
+                    <p class="fw-bold mb-1">
+                        {{ paymentDetail.voucher > 0 ? (paymentDetail.voucher | currency:'Rp. ') : 'Rp -' }}
+                    </p>
+                </div>
+                <ul class="m-0 p-0 ps-2">
+                    <li class="m-0 font-size-10">
+                        {{ voucher.nominal_rupiah | currency:'Rp. ' }} {{ voucher.name }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="payment-detail py-2">
+        <div class="d-flex justify-content-between pb-2">
+            <h6>Total Pembayaran</h6>
+            <h6>{{ paymentDetail.total > 0 ? (paymentDetail.total | currency:'Rp. ') : 'Rp -' }}</h6>
+        </div>
+        <button type="submit" class="w-100 btn btn-primary" [ngClass]="{'disabled': isLoadingInsert}"
+                (click)="save()">
+            <span *ngIf="isLoadingInsert" class="spinner-border spinner-border-sm me-2"></span>
+            <span *ngIf="!isLoadingInsert">
+                <em class="fas fa-plus"></em> Tambah Pesanan
+            </span>
+        </button>
+    </div>
+</div>
+
+<ng-template #formUpdateCustomer let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">Update Customer</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-form-customer [customerId]="customer.id" (afterSave)="modal.close(); onAfterSaveCustomer($event);"
+                           [isModal]="true"></app-form-customer>
+    </div>
+</ng-template>

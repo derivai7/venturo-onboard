@@ -1,0 +1,113 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <h1>Laporan Penjualan</h1>
+                    <div class="row g-1 w-md-600px">
+                        <div class="col-12 col-md-4">
+                            <app-daterangepicker [startDate]="filter.start_date" [endDate]="filter.end_date"
+                                                 [showRanges]="'true'" (onChange)="setFilterPeriod($event)"
+                                                 [isFilter]="true">
+                            </app-daterangepicker>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <ng-select class="filter-select" [items]="customers" (change)="setFilterCustomer($event)"
+                                       id="customer_id" placeholder="Pilih Customer" bindLabel="name" bindValue="id"
+                                       [loading]="loadingCustomer" [searchable]="false" [multiple]="true">
+                                <ng-template ng-header-tmp>
+                                    <input class="form-control form-select-sm" type="text" debounceKeyUp
+                                           (onEvent)="getCustomers($event.target.value)"/>
+                                </ng-template>
+                            </ng-select>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <ng-select class="filter-select" [items]="menus" (change)="setFilterMenus($event)"
+                                       id="promo_id"
+                                       placeholder="Pilih Menu" bindLabel="name" bindValue="id"
+                                       [loading]="loadingMenu" [searchable]="false" [multiple]="true">
+                                <ng-template ng-header-tmp>
+                                    <input class="form-control form-select-sm" type="text" debounceKeyUp
+                                           (onEvent)="getMenus($event.target.value)"/>
+                                </ng-template>
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" datatable [dtOptions]="dtOptions">
+                            <thead class="thead-light">
+                            <tr>
+                                <th class="align-middle" style="width: 50px;">No</th>
+                                <th class="align-middle">No Struk</th>
+                                <th class="align-middle text-center">Customer</th>
+                                <th class="align-middle text-center">Tanggal</th>
+                                <th class="align-middle text-center" style="min-width: 150px">Promo</th>
+                                <th class="align-middle text-center">Total Bayar</th>
+                                <th class="align-middle text-center" style="min-width: 140px">Menu</th>
+                                <th class="align-middle text-center">Jumlah</th>
+                                <th class="align-middle text-center">Harga</th>
+                                <th class="align-middle text-center">Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ng-container *ngFor="let sale of sales; let i = index">
+                                <tr>
+                                    <td class="align-middle">{{ sale.no }}</td>
+                                    <td class="align-middle">{{ sale.no_receipt }}</td>
+                                    <td class="align-middle text-center">{{ sale.customer_name }}</td>
+                                    <td class="align-middle text-center">
+                                        {{ sale.date_transaction | date:'dd-MM-yyyy' }}
+                                    </td>
+                                    <td class="align-middle">
+                                        <div *ngIf="sale.voucher_name" class="d-flex">
+                                            <span class="me-1">-</span>{{ sale.voucher_name }}
+                                        </div>
+                                        <div *ngIf="sale.discount_name" class="d-flex">
+                                            <span class="me-1">-</span>{{ sale.discount_name }}
+                                        </div>
+                                        <div *ngIf="!sale.voucher_name && !sale.discount_name" class="text-center">
+                                            -
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        {{ sale.total_payment | currency:'Rp. ' }}
+                                    </td>
+                                    <td class="align-middle text-center">{{sale.details[0]?.menu}}</td>
+                                    <td class="align-middle text-center">{{sale.details[0]?.total_item}}</td>
+                                    <td class="align-middle text-center">
+                                        {{sale.details[0]?.price | currency:'Rp. '}}
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        {{sale.details[0]?.total | currency:'Rp. '}}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let detail of sale.details; let j = index">
+                                    <ng-container *ngIf="j > 0">
+                                        <td class="align-middle"></td>
+                                        <td class="align-middle"></td>
+                                        <td class="align-middle"></td>
+                                        <td class="align-middle"></td>
+                                        <td class="align-middle"></td>
+                                        <td class="align-middle"></td>
+                                        <td class="align-middle text-center">{{ detail.menu }}</td>
+                                        <td class="align-middle text-center">{{ detail.total_item }}</td>
+                                        <td class="align-middle text-center">
+                                            {{ detail.price | currency:'Rp. ' }}
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            {{ detail.total | currency:'Rp. ' }}
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                            </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

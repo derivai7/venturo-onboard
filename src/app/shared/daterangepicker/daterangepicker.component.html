@@ -1,0 +1,13 @@
+<div class="input-group">
+    <div [ngClass]="{'input-group-sm': isFilter}">
+        <span class="input-group-text h-100">
+            <em class="fa fa-calendar"></em>
+        </span>
+    </div>
+    <input daterangepicker name="daterange" [disabled]="disabled" [(ngModel)]="model.daterange"
+           (selected)="selectedDate($event)" type="text" class="form-control" placeholder="Masukkan tanggal"
+           [ngClass]="{'form-control-sm': isFilter, 'border-right-none': isFilter && model.daterange}">
+    <span *ngIf="isFilter && model.daterange" class="input-group-text btn-reset">
+        <em class="fa fa-times font-size-12 text-black-50" (click)="clearDateRange()"></em>
+    </span>
+</div>

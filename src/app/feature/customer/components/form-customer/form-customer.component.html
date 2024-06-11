@@ -1,0 +1,67 @@
+<div class="card card-transparent">
+    <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+        <h1>{{titleForm}}</h1>
+    </div>
+    <div class="card-body">
+        <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+        <form [ngClass]="{'row g-3' : !isModal}">
+            <div [ngClass]="{'col-md-2' : !isModal}">
+                <div class="image-frame m-auto mb-5">
+                    <app-upload-image
+                            [defaultImage]="formModel.photo_url"
+                            [ratioHigh]="4"
+                            [ratioWidth]="3"
+                            (onSubmit)="getCroppedImage($event)">
+                    </app-upload-image>
+                </div>
+            </div>
+            <div [ngClass]="{'col-md-5' : !isModal}">
+                <div class="form-group mb-3">
+                    <label for="name" class="form-label required">Nama</label>
+                    <input [(ngModel)]="formModel.name" type="text" id="name" name="name" class="form-control"
+                           [ngClass]="{'disabled': isDisabledForm}" placeholder="Nama Customer">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label required">Email</label>
+                    <input [(ngModel)]="formModel.email" type="email" id="email" name="email" class="form-control"
+                           placeholder="Email Customer">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="dob" class="form-label required">Tanggal Lahir</label>
+                    <input [(ngModel)]="formModel.date_of_birth" type="date" id="dob" name="date_of_birth"
+                           class="form-control" placeholder="DD MM YY">
+                </div>
+            </div>
+            <div [ngClass]="{'col-md-5' : !isModal}">
+                <div class="form-group mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input [(ngModel)]="formModel.phone_number" type="text" id="phone" name="phone_number"
+                           class="form-control" placeholder="No Telepon">
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">Status</label>
+                    <div class="btn-group btn-group-toggle d-block" ngbRadioGroup name="is_verified"
+                         [(ngModel)]="formModel.is_verified">
+                        <label ngbButtonLabel class="btn btn-primary" [class.active]="formModel.is_verified == '1'">
+                            <input type="radio" class="radio-button" ngbButton value="1">Terverifikasi
+                        </label>
+                        <label ngbButtonLabel class="btn btn-primary" [class.active]="formModel.is_verified == '0'">
+                            <input type="radio" class="radio-button" ngbButton value="0">Belum Terverifikasi
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+                <button type="button" class="btn btn-outline-primary me-2" (click)="back()">
+                    <em class="fas fa-chevron-left"></em> Keluar
+                </button>
+                <button type="submit" class="btn btn-primary" [ngClass]="{'disabled': isDisabledForm}" (click)="save()">
+                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                    <span *ngIf="!isLoading">
+                        <em class="fas fa-save"></em> Simpan
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

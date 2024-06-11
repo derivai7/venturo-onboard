@@ -1,0 +1,15 @@
+#report-sales tr td {
+  vertical-align: middle!important;
+}
+
+#report-sales tr td.nominal {
+  text-align: center;
+}
+
+#report-sales tr.customer {
+  background: #F8F9FA;
+}
+
+#report-sales tr.customer td {
+  font-weight: 600;
+}

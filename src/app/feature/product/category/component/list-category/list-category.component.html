@@ -1,0 +1,69 @@
+<ng-progress [speed]="200" [meteor]="false" [spinner]="false" color="#009aad" style="height: 4px;"></ng-progress>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h1>Daftar Category</h1>
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-primary py-1" (click)="createCategory(formCategory)">
+                            <em class="fa fa-plus align-middle"></em> Tambah Category
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" datatable [dtOptions]="dtOptions">
+                            <thead class="thead-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th class="me-2 text-end">Aksi</th>
+                            </tr>
+                            </thead>
+                            <tbody dndDropzone dndEffectAllowed="move" (dndDrop)="onDrop($any($event), listCategory)">
+                            <tr dndPlaceholderRef class="dndPlaceholder">
+                                <td colspan="3" class="dndPlaceholder"></td>
+                            </tr>
+                            <tr class="py-2 draggable" draggable="true"
+                                *ngFor="let category of listCategory; let i = index;" [dndDraggable]="category"
+                                dndEffectAllowed="move" (dndMoved)="onDragged(category, listCategory)">
+                                <td class="align-middle">{{ i+1 }}</td>
+                                <td class="align-middle">{{ category.name }}</td>
+                                <td class="align-middle col-8">
+                                    <div class="d-flex justify-content-end pe-2">
+                                        <button class="btn btn-light btn-sm me-2"
+                                                (click)="updateCategory(formCategory, category)"
+                                                ngbTooltip="Ubah">
+                                            <em class="fa fa-edit"></em>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" (click)="deleteCategory(category.id)"
+                                                ngbTooltip="Hapus">
+                                            <em class="fa fa-trash"></em>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #formCategory let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">{{titleModal}}</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-form-category [categoryId]="categoryId" (afterSave)="onAfterSave($event); modal.close();">
+        </app-form-category>
+    </div>
+</ng-template>

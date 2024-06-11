@@ -1,0 +1,86 @@
+<div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+<form class="row g-3 g-md-5">
+    <div class="col-md-2">
+        <div class="image-frame m-auto rounded overflow-hidden">
+            <app-upload-image
+                    [defaultImage]="formModel.photo_url"
+                    [ratioHigh]="4"
+                    [ratioWidth]="4"
+                    (onSubmit)="getCroppedImage($event)">
+            </app-upload-image>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="form-group row mb-3">
+            <label class="col-md-3 form-label required my-auto">Nama</label>
+            <div class="col-md-9">
+                <input [(ngModel)]="formModel.name" type="text" name="name" class="form-control"
+                       placeholder="Nama Promo">
+            </div>
+        </div>
+        <div class="form-group row mb-3">
+            <label class="col-md-3 form-label required my-auto">Status</label>
+            <div class="col-md-9">
+                <div class="btn-group btn-group-toggle" ngbRadioGroup name="status"
+                     [(ngModel)]="formModel.status">
+                    <label ngbButtonLabel class="btn btn-primary">
+                        <input type="radio" class="radio-button" ngbButton value="voucher"> Voucher
+                    </label>
+                    <label ngbButtonLabel class="btn btn-primary">
+                        <input type="radio" class="radio-button" ngbButton value="discount"> Discount
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row mb-3">
+            <label class="col-md-3 form-label required my-auto">Nominal</label>
+            <div class="col-md-9">
+                <div class="input-group mr-2">
+                    <div *ngIf="formModel.status === 'voucher'" class="input-group-prepend">
+                        <span class="input-group-text">Rp</span>
+                    </div>
+                    <input *ngIf="formModel.status === 'voucher'" [(ngModel)]="formModel.nominal_rupiah"
+                           type="text" name="nominal_rupiah" class="form-control"
+                           placeholder="Ex. 10.000">
+                    <input *ngIf="formModel.status === 'discount'" [(ngModel)]="formModel.nominal_percentage"
+                           type="text" name="nominal_percentage" class="form-control"
+                           placeholder="Ex. 10">
+                    <div *ngIf="formModel.status === 'discount'" class="input-group-prepend">
+                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row mb-3">
+            <label class="col-md-3 form-label my-auto">Kadaluarsa</label>
+            <div class="col-md-9">
+                <select class="form-control" name="expired_in_day" [(ngModel)]="formModel.expired_in_day">
+                    <option value="" disabled selected>Pilih Kadaluarsa</option>
+                    <option value="1">1 Hari</option>
+                    <option value="7">7 Hari</option>
+                    <option value="30">30 Hari</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="form-group row mb-3">
+            <label class="col-md-3 form-label mt-md-2">Syarat & Ketentuan</label>
+            <div class="col-md-9">
+                <ckeditor [editor]="configEditor" [(ngModel)]="formModel.term_conditions"
+                          name="term_conditions"></ckeditor>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-primary me-2" (click)="back()">
+            <em class="fas fa-chevron-left"></em> Keluar
+        </button>
+        <button type="submit" class="btn btn-primary" [ngClass]="{'disabled': isDisabledForm}" (click)="save()">
+            <span *ngIf="isDisabledForm" class="spinner-border spinner-border-sm me-2"></span>
+            <span *ngIf="!isDisabledForm">
+                <em class="fas fa-save"></em> Simpan
+            </span>
+        </button>
+    </div>
+</form>
